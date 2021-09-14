@@ -123,6 +123,8 @@ class Ui_MainWindow(object):
         self.playlistsComboBox.setCurrentText("")
         self.playlistsComboBox.setDuplicatesEnabled(True)
         self.playlistsComboBox.setObjectName("playlistsComboBox")
+        for playlist in os.listdir(os.getcwd()):
+            self.playlistsComboBox.addItem(playlist)
         self.nowPlaying = QtWidgets.QTextBrowser(self.centralwidget)
         self.nowPlaying.setGeometry(QtCore.QRect(10, 460, 781, 23))
         self.nowPlaying.setObjectName("nowPlaying")
@@ -321,22 +323,34 @@ def playmusic(url, name, author):
     mediatoplay.play()
     time.sleep(0.5)
     length = mediatoplay.get_length() / 1000
-    print(length)
     cls()
     print("Playing " + author + " - " + name)
     time.sleep(length)
     mediatoplay.stop()
 
-playlist = readpl('play.list')
+app = QtWidgets.QApplication(sys.argv)
+MainWindow = QtWidgets.QMainWindow()
+ui = Ui_MainWindow()
+ui.setupUi(MainWindow)
+
+playlist = {}
+
+def getplaylist():
+    global playlist
+    playlist = readpl(ui.playlistsComboBox.currentText())
+    for item in list(playlist):
+        ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
+
 # addtopl(playlist, 'play.list')
 
 for item in list(playlist):
     playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
 
-app = QtWidgets.QApplication(sys.argv)
-MainWindow = QtWidgets.QMainWindow()
-ui = Ui_MainWindow()
-ui.setupUi(MainWindow)
+
 MainWindow.show()
+
+ui.openPlaylistButton.clicked.connect(getplaylist)
+
+
 sys.exit(app.exec_())
 
