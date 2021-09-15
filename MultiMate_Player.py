@@ -1,6 +1,7 @@
 import threading
 import time
 from tkinter import *
+import platform
 import sys, subprocess, os
 import urllib.parse
 import json
@@ -31,7 +32,13 @@ except:
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-class Ui_MainWindow(object):
+instance = vlc.Instance()
+media = None
+mediaplayer = instance.media_player_new()
+is_paused = False
+timeToSleep = 0
+
+class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(801, 580)
@@ -42,6 +49,8 @@ class Ui_MainWindow(object):
         self.timeline.setPageStep(1)
         self.timeline.setOrientation(QtCore.Qt.Horizontal)
         self.timeline.setObjectName("timeline")
+        self.timeline.setMaximum(1000)
+
         self.playpausebutton = QtWidgets.QPushButton(self.centralwidget)
         self.playpausebutton.setEnabled(True)
         self.playpausebutton.setGeometry(QtCore.QRect(390, 520, 40, 40))
@@ -49,15 +58,33 @@ class Ui_MainWindow(object):
         font.setKerning(True)
         self.playpausebutton.setFont(font)
         self.playpausebutton.setStyleSheet("background-color: rgba(10, 0, 0, 0);\n"
-"")
+                                        "")
         self.playpausebutton.setText("")
         self.playpausebutton.setObjectName("playpausebutton")
         self.playpausePicture = QtWidgets.QLabel(self.centralwidget)
         self.playpausePicture.setGeometry(QtCore.QRect(390, 520, 40, 40))
         self.playpausePicture.setText("")
-        self.playpausePicture.setPixmap(QtGui.QPixmap("D:\\RAZNOE\\prgrming\\PyQtUIs\\../../!программирование/PYSHARM projects/MultiMate Player/resources/MultiMate40x40.png"))
+        self.playpausePicture.setPixmap(QtGui.QPixmap("resources/MultiMate40x40.png"))
         self.playpausePicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.playpausePicture.setObjectName("playpausePicture")
+
+        self.hardstopbutton = QtWidgets.QPushButton(self.centralwidget)
+        self.hardstopbutton.setEnabled(True)
+        self.hardstopbutton.setGeometry(QtCore.QRect(290, 520, 40, 40))
+        font = QtGui.QFont()
+        font.setKerning(True)
+        self.hardstopbutton.setFont(font)
+        self.hardstopbutton.setStyleSheet("background-color: rgba(10, 0, 0, 0);\n"
+                                           "")
+        self.hardstopbutton.setText("")
+        self.hardstopbutton.setObjectName("hardstopbutton")
+        self.hardstopPicture = QtWidgets.QLabel(self.centralwidget)
+        self.hardstopPicture.setGeometry(QtCore.QRect(290, 520, 40, 40))
+        self.hardstopPicture.setText("")
+        self.hardstopPicture.setPixmap(QtGui.QPixmap("resources/hardstopbutton.png"))
+        self.hardstopPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.hardstopPicture.setObjectName("hardstopPicture")
+
         self.prevbutton = QtWidgets.QPushButton(self.centralwidget)
         self.prevbutton.setEnabled(True)
         self.prevbutton.setGeometry(QtCore.QRect(340, 520, 40, 40))
@@ -71,7 +98,7 @@ class Ui_MainWindow(object):
         self.prevPicture = QtWidgets.QLabel(self.centralwidget)
         self.prevPicture.setGeometry(QtCore.QRect(340, 520, 40, 40))
         self.prevPicture.setText("")
-        self.prevPicture.setPixmap(QtGui.QPixmap("D:\\RAZNOE\\prgrming\\PyQtUIs\\../../!программирование/PYSHARM projects/MultiMate Player/resources/prev.png"))
+        self.prevPicture.setPixmap(QtGui.QPixmap("resources/prev.png"))
         self.prevPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.prevPicture.setObjectName("prevPicture")
         self.nextbutton = QtWidgets.QPushButton(self.centralwidget)
@@ -87,9 +114,27 @@ class Ui_MainWindow(object):
         self.nextPicture = QtWidgets.QLabel(self.centralwidget)
         self.nextPicture.setGeometry(QtCore.QRect(440, 520, 40, 40))
         self.nextPicture.setText("")
-        self.nextPicture.setPixmap(QtGui.QPixmap("D:\\RAZNOE\\prgrming\\PyQtUIs\\../../!программирование/PYSHARM projects/MultiMate Player/resources/next.png"))
+        self.nextPicture.setPixmap(QtGui.QPixmap("resources/next.png"))
         self.nextPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.nextPicture.setObjectName("nextPicture")
+
+        self.hardplaybutton = QtWidgets.QPushButton(self.centralwidget)
+        self.hardplaybutton.setEnabled(True)
+        self.hardplaybutton.setGeometry(QtCore.QRect(490, 520, 40, 40))
+        font = QtGui.QFont()
+        font.setKerning(True)
+        self.hardplaybutton.setFont(font)
+        self.hardplaybutton.setStyleSheet("background-color: rgba(10, 0, 0, 0);\n"
+                                           "")
+        self.hardplaybutton.setText("")
+        self.hardplaybutton.setObjectName("hardplaybutton")
+        self.hardplayPicture = QtWidgets.QLabel(self.centralwidget)
+        self.hardplayPicture.setGeometry(QtCore.QRect(490, 520, 40, 40))
+        self.hardplayPicture.setText("")
+        self.hardplayPicture.setPixmap(QtGui.QPixmap("resources/hardplaybutton.png"))
+        self.hardplayPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.hardplayPicture.setObjectName("hardplayPicture")
+
         self.speedBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.speedBox.setGeometry(QtCore.QRect(10, 515, 62, 22))
         self.speedBox.setDecimals(1)
@@ -116,7 +161,7 @@ class Ui_MainWindow(object):
         self.VolDialBG = QtWidgets.QLabel(self.centralwidget)
         self.VolDialBG.setGeometry(QtCore.QRect(720, 0, 81, 81))
         self.VolDialBG.setText("")
-        self.VolDialBG.setPixmap(QtGui.QPixmap("D:\\RAZNOE\\prgrming\\PyQtUIs\\../../!программирование/PYSHARM projects/MultiMate Player/resources/MultiMate80x80.png"))
+        self.VolDialBG.setPixmap(QtGui.QPixmap("resources/MultiMate80x80.png"))
         self.VolDialBG.setObjectName("VolDialBG")
         self.playlistsComboBox = QtWidgets.QComboBox(self.centralwidget)
         self.playlistsComboBox.setGeometry(QtCore.QRect(0, 0, 231, 22))
@@ -138,9 +183,9 @@ class Ui_MainWindow(object):
         self.TextAllSongs.setGeometry(QtCore.QRect(0, 20, 301, 23))
         self.TextAllSongs.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.TextAllSongs.setObjectName("TextAllSongs")
-        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(310, 0, 331, 23))
-        self.textEdit.setObjectName("textEdit")
+        self.toFindName = QtWidgets.QTextEdit(self.centralwidget)
+        self.toFindName.setGeometry(QtCore.QRect(310, 0, 331, 23))
+        self.toFindName.setObjectName("toFindName")
         self.findSongButton = QtWidgets.QPushButton(self.centralwidget)
         self.findSongButton.setGeometry(QtCore.QRect(640, 0, 75, 23))
         self.findSongButton.setObjectName("findSongButton")
@@ -156,9 +201,12 @@ class Ui_MainWindow(object):
         self.restartPlayerButton = QtWidgets.QPushButton(self.centralwidget)
         self.restartPlayerButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
         self.restartPlayerButton.setObjectName("restartPlayerButton")
-        self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(310, 70, 401, 381))
-        self.textBrowser.setObjectName("textBrowser")
+        if platform.system() == "Darwin": # for MacOS
+            self.videoframe = QtWidgets.QMacCocoaViewContainer(self.centralwidget)
+        else:
+            self.videoframe = QtWidgets.QFrame(self.centralwidget)
+        self.videoframe.setGeometry(QtCore.QRect(310, 70, 401, 381))
+        self.videoframe.setObjectName("videoframe")
         self.timeline.raise_()
         self.playpausePicture.raise_()
         self.prevPicture.raise_()
@@ -177,13 +225,15 @@ class Ui_MainWindow(object):
         self.openPlaylistButton.raise_()
         self.songList.raise_()
         self.TextAllSongs.raise_()
-        self.textEdit.raise_()
+        self.toFindName.raise_()
         self.findSongButton.raise_()
         self.foundSongs.raise_()
         self.addThisSongButton.raise_()
         self.mixButton.raise_()
         self.restartPlayerButton.raise_()
-        self.textBrowser.raise_()
+        self.videoframe.raise_()
+        self.hardplaybutton.raise_()
+        self.hardstopbutton.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 801, 21))
@@ -195,6 +245,17 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.update_ui)
+
+    def update_ui(self):
+        global mediaplayer
+        media_pos = int(mediaplayer.get_position() * 1000)
+        self.timeline.setValue(media_pos)
+
+        if not mediaplayer.is_playing():
+            self.timer.stop()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -216,7 +277,6 @@ class Ui_MainWindow(object):
         self.restartPlayerButton.setText(_translate("MainWindow", "(Re)start \n"
 "player \n"
 "cycle"))
-        self.textBrowser.setPlaceholderText(_translate("MainWindow", "Logs"))
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -311,22 +371,50 @@ def addtopl(playlist, plname):
     json.dump(playlist, playlistfile, indent=3, ensure_ascii=False)
     playlistfile.close()
 
+def set_position():
+    global instance
+    global media
+    global mediaplayer
+    global is_paused
+    ui.timer.stop()
+    pos = ui.timeline.value()
+    mediaplayer.set_position(pos / 1000.0)
+    ui.timer.start(100)
 
 def playmusic(url, name, author):
     video = pafy.new(url)
-    best = video.getbestaudio()
+    best = video.getbest()
     playurl = best.url
-    # playurl = url
 
-    mediatoplay = vlc.MediaPlayer(playurl)
-    mediatoplay.audio_set_volume(100)
-    mediatoplay.play()
+    global instance
+    global media
+    global mediaplayer
+    global is_paused
+
+    media = instance.media_new(playurl)
+    mediaplayer.set_media(media)
+
+    if platform.system() == "Linux":  # for Linux using the X Server
+        mediaplayer.set_xwindow(int(ui.videoframe.winId()))
+    elif platform.system() == "Windows":  # for Windows
+        mediaplayer.set_hwnd(int(ui.videoframe.winId()))
+    elif platform.system() == "Darwin":  # for MacOS
+        mediaplayer.set_nsobject(int(ui.videoframe.winId()))
+
+    if mediaplayer.is_playing():
+        mediaplayer.pause()
+        is_paused = True
+        ui.timer.stop()
+    else:
+        mediaplayer.play()
+        ui.timer.start(100)
+        is_paused = False
+
+    mediaplayer.audio_set_volume(100)
     time.sleep(0.5)
-    length = mediatoplay.get_length() / 1000
+    timeToSleep = mediaplayer.get_length() / 1000
     cls()
     print("Playing " + author + " - " + name)
-    time.sleep(length)
-    mediatoplay.stop()
 
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
@@ -343,14 +431,16 @@ def getplaylist():
 
 # addtopl(playlist, 'play.list')
 
-for item in list(playlist):
-    playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
+def playallpl():
+    for item in list(playlist):
+        playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
 
 
 MainWindow.show()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
-
+ui.hardplaybutton.clicked.connect(playallpl)
+ui.timeline.sliderMoved.connect(set_position)
+ui.timeline.sliderPressed.connect(set_position)
 
 sys.exit(app.exec_())
-
