@@ -37,6 +37,8 @@ media = None
 mediaplayer = instance.media_player_new()
 is_paused = False
 timeToSleep = 0
+playnext = True
+newindex = 0
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
@@ -251,7 +253,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def update_ui(self):
         global mediaplayer
+        global playnext
         media_pos = int(mediaplayer.get_position() * 1000)
+        if mediaplayer.get_position() > 0.99:
+            playallpl(newindex)
         self.timeline.setValue(media_pos)
 
         if not mediaplayer.is_playing():
@@ -390,6 +395,10 @@ def playmusic(url, name, author):
     global media
     global mediaplayer
     global is_paused
+    global timeToSleep
+    global playnext
+
+    playnext = False
 
     media = instance.media_new(playurl)
     mediaplayer.set_media(media)
@@ -431,10 +440,12 @@ def getplaylist():
 
 # addtopl(playlist, 'play.list')
 
-def playallpl():
-    for item in list(playlist):
-        playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
-
+def playallpl(index=0):
+    global newindex
+    listplaylist = list(playlist)
+    item = listplaylist[index]
+    playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
+    newindex += 1
 
 MainWindow.show()
 
