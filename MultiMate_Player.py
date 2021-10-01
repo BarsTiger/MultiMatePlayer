@@ -690,8 +690,7 @@ def updateAppPy():
         archfile.extractall("resources")
     os.remove('resources/resources.zip')
     urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", 'MultiMate_Player.py')
-    os.system(sys.executable + ' MultiMate_Player.py')
-    time.sleep(0.5)
+    uiUpd.updateButton.setText("I will crash, reopen pls")
     sys.exit()
 
 MainWindow.show()
