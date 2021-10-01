@@ -5,7 +5,9 @@ from tkinter import *
 import platform
 import sys, subprocess, os
 import urllib.parse
+import urllib.request
 import json
+import zipfile
 try:
     import vlc
 except:
@@ -683,7 +685,13 @@ def mixPlaylist():
     print("Mixed!")
 
 def updateAppPy():
-    pass
+    urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources.zip", 'resources/resources.zip')
+    with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
+        archfile.extractall("resources")
+    os.remove('resources/resources.zip')
+    urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", 'MultiMate_Player.py')
+    os.system(sys.executable + ' MultiMate_Player.py')
+    sys.exit()
 
 MainWindow.show()
 cls()
