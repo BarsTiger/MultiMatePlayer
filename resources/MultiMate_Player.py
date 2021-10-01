@@ -1,3 +1,4 @@
+import random
 import threading
 import time
 from tkinter import *
@@ -32,6 +33,7 @@ except:
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+playlist = {}
 instance = vlc.Instance()
 media = None
 mediaplayer = instance.media_player_new()
@@ -44,6 +46,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(801, 580)
+        MainWindow.setWindowIcon(QtGui.QIcon('resources/MultiMate.ico'))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.timeline = QtWidgets.QSlider(self.centralwidget)
@@ -201,9 +204,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.mixButton = QtWidgets.QPushButton(self.centralwidget)
         self.mixButton.setGeometry(QtCore.QRect(720, 90, 75, 41))
         self.mixButton.setObjectName("mixButton")
-        self.settingsButton = QtWidgets.QPushButton(self.centralwidget)
-        self.settingsButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
-        self.settingsButton.setObjectName("settingsButton")
+        self.playlistSettingsButton = QtWidgets.QPushButton(self.centralwidget)
+        self.playlistSettingsButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
+        self.playlistSettingsButton.setObjectName("playlistSettingsButton")
         if platform.system() == "Darwin": # for MacOS
             self.videoframe = QtWidgets.QMacCocoaViewContainer(self.centralwidget)
         else:
@@ -233,7 +236,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.foundSongs.raise_()
         self.addThisSongButton.raise_()
         self.mixButton.raise_()
-        self.settingsButton.raise_()
+        self.playlistSettingsButton.raise_()
         self.videoframe.raise_()
         self.hardplaybutton.raise_()
         self.hardstopbutton.raise_()
@@ -259,6 +262,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if mediaplayer.get_position() > 0.99:
             playallpl(newindex)
         self.timeline.setValue(media_pos)
+        self.timenow.setText(str(time.strftime("%M:%S", time.gmtime(int(mediaplayer.get_time()/1000)))) + "/" + str(time.strftime("%M:%S", time.gmtime(int(mediaplayer.get_length()/1000)))))
 
         if not mediaplayer.is_playing():
             self.timer.stop()
@@ -280,7 +284,68 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.findSongButton.setText(_translate("MainWindow", "Find song"))
         self.addThisSongButton.setText(_translate("MainWindow", "Add this song"))
         self.mixButton.setText(_translate("MainWindow", "Mix"))
-        self.settingsButton.setText(_translate("MainWindow", "Settings"))
+        self.playlistSettingsButton.setText(_translate("MainWindow", "Playlist \nsettings"))
+
+
+class Ui_PlaylistSettings(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(160, 97)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 160, 80))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.deletesongButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.deletesongButton.setObjectName("deletesongButton")
+        self.verticalLayout.addWidget(self.deletesongButton)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 160, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Playlist settings"))
+        self.deletesongButton.setText(_translate("MainWindow", "Manage songs in playlist"))
+
+class Ui_DelSongs(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(300, 510)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(0, 0, 300, 461))
+        self.listWidget.setObjectName("listWidget")
+        self.delButton = QtWidgets.QPushButton(self.centralwidget)
+        self.delButton.setGeometry(QtCore.QRect(0, 460, 300, 23))
+        self.delButton.setObjectName("delButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 300, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Songs manager"))
+        self.delButton.setText(_translate("MainWindow", "Delete selected song"))
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -429,6 +494,7 @@ def playmusic(url, name, author):
     time.sleep(0.5)
     timeToSleep = mediaplayer.get_length() / 1000
     cls()
+    ui.nowPlaying.setText(author + " - " + name)
     print("Playing " + author + " - " + name)
 
 app = QtWidgets.QApplication(sys.argv)
@@ -436,25 +502,36 @@ MainWindow = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
 ui.setupUi(MainWindow)
 
-playlist = {}
+appPlSet = QtWidgets.QApplication(sys.argv)
+MainWindowPlSet = QtWidgets.QMainWindow()
+uiPlSet = Ui_PlaylistSettings()
+uiPlSet.setupUi(MainWindowPlSet)
+
+appDelS = QtWidgets.QApplication(sys.argv)
+MainWindowDelS = QtWidgets.QMainWindow()
+uiDelS = Ui_DelSongs()
+uiDelS.setupUi(MainWindowDelS)
 
 def getplaylist():
     global playlist
     global newindex
+    global listplaylist
     newindex = 0
     playlist = readpl(ui.playlistsComboBox.currentText())
     ui.songList.clear()
     for item in list(playlist):
         ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
-
-# addtopl(playlist, 'play.list')
+    listplaylist = list(playlist)
 
 def playallpl(index=0):
+    global listplaylist
     global newindex
-    listplaylist = list(playlist)
     item = listplaylist[index]
     playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
-    newindex += 1
+    if newindex < len(listplaylist) - 1:
+        newindex += 1
+    else:
+        newindex = 0
 
 def playnextsong():
     global newindex
@@ -488,7 +565,36 @@ def changespeed():
 def addtofoundsongs():
     ui.toFindName.toPlainText()
 
+def generateDeletionList():
+    global playlist
+    songList = []
+    for item in list(playlist):
+        songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
+    uiDelS.listWidget.clear()
+    uiDelS.listWidget.addItems(songList)
+
+def showMainWindowDelS():
+    generateDeletionList()
+    MainWindowDelS.show()
+
+def delSongFromPl():
+    global playlist
+    indextodel = uiDelS.listWidget.selectedIndexes()[0].row()
+    toDelID = list(playlist)[indextodel]
+    playlist.pop(toDelID)
+    playlistfile = open(ui.playlistsComboBox.currentText(), 'w+')
+    json.dump(playlist, playlistfile, indent=3, ensure_ascii=False)
+    playlistfile.close()
+
+    getplaylist()
+
+def mixPlaylist():
+    global listplaylist
+    random.shuffle(listplaylist)
+    print("Mixed!")
+
 MainWindow.show()
+cls()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
 ui.hardplaybutton.clicked.connect(playallpl)
@@ -502,5 +608,11 @@ ui.volumeDial.valueChanged.connect(changevolume)
 ui.findSongButton.clicked.connect(searchinYT)
 ui.addThisSongButton.clicked.connect(addtopl)
 ui.speedBox.valueChanged.connect(changespeed)
+ui.playlistSettingsButton.clicked.connect(MainWindowPlSet.show)
+ui.mixButton.clicked.connect(mixPlaylist)
+
+uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
+
+uiDelS.delButton.clicked.connect(delSongFromPl)
 
 sys.exit(app.exec_())
