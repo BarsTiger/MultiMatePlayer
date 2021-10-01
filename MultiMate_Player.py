@@ -200,9 +200,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.mixButton = QtWidgets.QPushButton(self.centralwidget)
         self.mixButton.setGeometry(QtCore.QRect(720, 90, 75, 41))
         self.mixButton.setObjectName("mixButton")
-        self.restartPlayerButton = QtWidgets.QPushButton(self.centralwidget)
-        self.restartPlayerButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
-        self.restartPlayerButton.setObjectName("restartPlayerButton")
+        self.settingsButton = QtWidgets.QPushButton(self.centralwidget)
+        self.settingsButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
+        self.settingsButton.setObjectName("settingsButton")
         if platform.system() == "Darwin": # for MacOS
             self.videoframe = QtWidgets.QMacCocoaViewContainer(self.centralwidget)
         else:
@@ -279,9 +279,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.findSongButton.setText(_translate("MainWindow", "Find song"))
         self.addThisSongButton.setText(_translate("MainWindow", "Add this song"))
         self.mixButton.setText(_translate("MainWindow", "Mix"))
-        self.restartPlayerButton.setText(_translate("MainWindow", "(Re)start \n"
-"player \n"
-"cycle"))
+        self.settingsButton.setText(_translate("MainWindow", "Settings"))
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -351,15 +349,22 @@ def readpl(plname):
 
     return playlist
 
-def addtopl(playlist, plname):
-    search = input("Search MultiFind: ")
-
+def searchinYT():
+    global results
+    search = ui.toFindName.toPlainText()
     results = YoutubeSearch(search, max_results=10).to_dict()
 
     for i in range(len(results)):
-        print(str(i) + " - " + results[i]["channel"] + ": " + results[i]["title"])
+        ui.foundSongs.addItem(results[i]["channel"] + ": " + results[i]["title"])
 
-    whichres = int(input("Type here: "))
+    return results
+
+results = dict()
+
+def addtopl():
+    global results
+    global playlist
+    whichres = ui.foundSongs.currentIndex()
 
     url = "https://www.youtube.com" + results[whichres]["url_suffix"]
 
@@ -370,11 +375,11 @@ def addtopl(playlist, plname):
     willbesong['url'] = url
     playlist[str(len(list(playlist)))] = willbesong
 
-    print(playlist)
-
-    playlistfile = open(plname, 'w+')
+    playlistfile = open(ui.playlistsComboBox.currentText(), 'w+')
     json.dump(playlist, playlistfile, indent=3, ensure_ascii=False)
     playlistfile.close()
+
+    getplaylist()
 
 def set_position():
     global instance
@@ -462,6 +467,23 @@ def playprevsong():
 def stopandclear():
     mediaplayer.set_media(None)
 
+def playpause():
+    global is_paused
+    if mediaplayer.is_playing():
+        mediaplayer.pause()
+        is_paused = True
+        ui.timer.stop()
+    else:
+        mediaplayer.play()
+        ui.timer.start(100)
+        is_paused = False
+
+def changevolume():
+    mediaplayer.audio_set_volume(ui.volumeDial.value())
+
+def addtofoundsongs():
+    ui.toFindName.toPlainText()
+
 MainWindow.show()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
@@ -471,6 +493,9 @@ ui.timeline.sliderPressed.connect(set_position)
 ui.nextbutton.clicked.connect(playnextsong)
 ui.prevbutton.clicked.connect(playprevsong)
 ui.hardstopbutton.clicked.connect(stopandclear)
-
+ui.playpausebutton.clicked.connect(playpause)
+ui.volumeDial.valueChanged.connect(changevolume)
+ui.findSongButton.clicked.connect(searchinYT)
+ui.addThisSongButton.clicked.connect(addtopl)
 
 sys.exit(app.exec_())
