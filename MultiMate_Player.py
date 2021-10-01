@@ -434,7 +434,10 @@ playlist = {}
 
 def getplaylist():
     global playlist
+    global newindex
+    newindex = 0
     playlist = readpl(ui.playlistsComboBox.currentText())
+    ui.songList.clear()
     for item in list(playlist):
         ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
 
@@ -447,11 +450,27 @@ def playallpl(index=0):
     playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
     newindex += 1
 
+def playnextsong():
+    global newindex
+    playallpl(newindex)
+
+def playprevsong():
+    global newindex
+    newindex -= 2
+    playallpl(newindex)
+
+def stopandclear():
+    mediaplayer.set_media(None)
+
 MainWindow.show()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
 ui.hardplaybutton.clicked.connect(playallpl)
 ui.timeline.sliderMoved.connect(set_position)
 ui.timeline.sliderPressed.connect(set_position)
+ui.nextbutton.clicked.connect(playnextsong)
+ui.prevbutton.clicked.connect(playprevsong)
+ui.hardstopbutton.clicked.connect(stopandclear)
+
 
 sys.exit(app.exec_())
