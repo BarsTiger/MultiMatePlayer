@@ -141,6 +141,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.speedBox.setGeometry(QtCore.QRect(10, 515, 62, 22))
         self.speedBox.setDecimals(1)
         self.speedBox.setProperty("value", 1.0)
+        self.speedBox.setSingleStep(0.2)
         self.speedBox.setObjectName("speedBox")
         self.timenow = QtWidgets.QTextEdit(self.centralwidget)
         self.timenow.setGeometry(QtCore.QRect(713, 515, 81, 23))
@@ -232,7 +233,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.foundSongs.raise_()
         self.addThisSongButton.raise_()
         self.mixButton.raise_()
-        self.restartPlayerButton.raise_()
+        self.settingsButton.raise_()
         self.videoframe.raise_()
         self.hardplaybutton.raise_()
         self.hardstopbutton.raise_()
@@ -264,7 +265,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MultiMate Player"))
         self.speedBox.setPrefix(_translate("MainWindow", "x"))
         self.speedTextLabel.setText(_translate("MainWindow", "Speed"))
         self.timeTextLabel.setText(_translate("MainWindow", "Time"))
@@ -481,6 +482,9 @@ def playpause():
 def changevolume():
     mediaplayer.audio_set_volume(ui.volumeDial.value())
 
+def changespeed():
+    mediaplayer.set_rate(ui.speedBox.value())
+
 def addtofoundsongs():
     ui.toFindName.toPlainText()
 
@@ -497,5 +501,6 @@ ui.playpausebutton.clicked.connect(playpause)
 ui.volumeDial.valueChanged.connect(changevolume)
 ui.findSongButton.clicked.connect(searchinYT)
 ui.addThisSongButton.clicked.connect(addtopl)
+ui.speedBox.valueChanged.connect(changespeed)
 
 sys.exit(app.exec_())
