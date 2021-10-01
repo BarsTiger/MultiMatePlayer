@@ -691,6 +691,7 @@ def updateAppPy():
     os.remove('resources/resources.zip')
     urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", 'MultiMate_Player.py')
     os.system(sys.executable + ' MultiMate_Player.py')
+    time.sleep(0.5)
     sys.exit()
 
 MainWindow.show()
