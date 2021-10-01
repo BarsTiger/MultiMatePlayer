@@ -210,9 +210,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.mixButton = QtWidgets.QPushButton(self.centralwidget)
         self.mixButton.setGeometry(QtCore.QRect(720, 90, 75, 41))
         self.mixButton.setObjectName("mixButton")
+
         self.playlistSettingsButton = QtWidgets.QPushButton(self.centralwidget)
         self.playlistSettingsButton.setGeometry(QtCore.QRect(720, 140, 75, 51))
         self.playlistSettingsButton.setObjectName("playlistSettingsButton")
+
+        self.settingsButton = QtWidgets.QPushButton(self.centralwidget)
+        self.settingsButton.setGeometry(QtCore.QRect(720, 200, 75, 45))
+        self.settingsButton.setObjectName("settingsButton")
+
         if platform.system() == "Darwin": # for MacOS
             self.videoframe = QtWidgets.QMacCocoaViewContainer(self.centralwidget)
         else:
@@ -291,6 +297,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.addThisSongButton.setText(_translate("MainWindow", "Add this song"))
         self.mixButton.setText(_translate("MainWindow", "Mix"))
         self.playlistSettingsButton.setText(_translate("MainWindow", "Playlist \nsettings"))
+        self.settingsButton.setText(_translate("MainWindow", "Settings"))
 
 
 class Ui_PlaylistSettings(object):
@@ -324,6 +331,72 @@ class Ui_PlaylistSettings(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Playlist settings"))
         self.deletesongButton.setText(_translate("MainWindow", "Manage songs in playlist"))
+
+class Ui_Settings(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(160, 97)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 160, 80))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+
+        self.updateButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.updateButton.setObjectName("updateButton")
+        self.verticalLayout.addWidget(self.updateButton)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 160, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Settings"))
+        self.updateButton.setText(_translate("MainWindow", "Upgrade player"))
+
+class Ui_Updater(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(160, 97)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 160, 80))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+
+        self.updateButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.updateButton.setObjectName("updateButton")
+        self.verticalLayout.addWidget(self.updateButton)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 160, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Updater"))
+        self.updateButton.setText(_translate("MainWindow", "Download newest .py"))
 
 class Ui_DelSongs(object):
     def setupUi(self, MainWindow):
@@ -518,6 +591,16 @@ MainWindowDelS = QtWidgets.QMainWindow()
 uiDelS = Ui_DelSongs()
 uiDelS.setupUi(MainWindowDelS)
 
+appSet = QtWidgets.QApplication(sys.argv)
+MainWindowSet = QtWidgets.QMainWindow()
+uiSet = Ui_Settings()
+uiSet.setupUi(MainWindowSet)
+
+appUpd = QtWidgets.QApplication(sys.argv)
+MainWindowUpd = QtWidgets.QMainWindow()
+uiUpd = Ui_Updater()
+uiUpd.setupUi(MainWindowUpd)
+
 def getplaylist():
     global playlist
     global newindex
@@ -599,6 +682,9 @@ def mixPlaylist():
     random.shuffle(listplaylist)
     print("Mixed!")
 
+def updateAppPy():
+    pass
+
 MainWindow.show()
 cls()
 
@@ -616,9 +702,14 @@ ui.addThisSongButton.clicked.connect(addtopl)
 ui.speedBox.valueChanged.connect(changespeed)
 ui.playlistSettingsButton.clicked.connect(MainWindowPlSet.show)
 ui.mixButton.clicked.connect(mixPlaylist)
+ui.settingsButton.clicked.connect(MainWindowSet.show)
 
 uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
 
 uiDelS.delButton.clicked.connect(delSongFromPl)
+
+uiSet.updateButton.clicked.connect(MainWindowUpd.show)
+
+uiUpd.updateButton.clicked.connect(updateAppPy)
 
 sys.exit(app.exec_())
