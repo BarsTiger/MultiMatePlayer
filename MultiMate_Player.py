@@ -30,6 +30,12 @@ except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", 'PyQt5'])
     from PyQt5 import QtCore, QtGui, QtWidgets
 
+try:
+    import psycopg2
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", 'psycopg2'])
+    import psycopg2
+
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
