@@ -501,6 +501,8 @@ def searchinYT():
     search = ui.toFindName.toPlainText()
     results = YoutubeSearch(search, max_results=10).to_dict()
 
+    ui.foundSongs.clear()
+
     for i in range(len(results)):
         ui.foundSongs.addItem(results[i]["channel"] + ": " + results[i]["title"])
 
