@@ -489,6 +489,77 @@ class Ui_ProSearch(object):
         self.searchButton.setText(_translate("MainWindow", "Search"))
         self.pushButton.setText(_translate("MainWindow", "Add selected"))
 
+    def searchinYT(self):
+        global results
+        search = self.lineEdit.text()
+        results = YoutubeSearch(search, max_results=150).to_dict()
+
+        self.listWidget.clear()
+
+        for i in range(len(results)):
+            item = QtWidgets.QListWidgetItem(results[i]["channel"] + ": " + results[i]["title"])
+            item.setCheckState(QtCore.Qt.Unchecked)
+            self.listWidget.addItem(item)
+
+        return results
+
+    def addtopl(self):
+        global results
+        global playlist
+        whichres = list()
+        for index in range(self.listWidget.count()):
+            if self.listWidget.item(index).checkState() == QtCore.Qt.Checked:
+                whichres.append(index)
+
+        for i in whichres:
+            i = int(i)
+            url = "https://www.youtube.com" + results[i]["url_suffix"]
+            willbesong = {}
+            willbesong['name'] = results[i]["title"]
+            willbesong['author'] = results[i]["channel"]
+            willbesong['url'] = url
+            playlist[str(len(list(playlist)))] = willbesong
+
+        playlistfile = open(ui.playlistsComboBox.currentText(), 'w+')
+        json.dump(playlist, playlistfile, indent=3, ensure_ascii=False)
+        playlistfile.close()
+
+        getplaylist()
+
+class Ui_ExtendedMenu(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(151, 74)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.prosearchButton = QtWidgets.QPushButton(self.centralwidget)
+        self.prosearchButton.setGeometry(QtCore.QRect(0, 0, 150, 50))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.prosearchButton.sizePolicy().hasHeightForWidth())
+        self.prosearchButton.setSizePolicy(sizePolicy)
+        self.prosearchButton.setMaximumSize(QtCore.QSize(150, 50))
+        self.prosearchButton.setObjectName("prosearchButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 151, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Extended functions"))
+        self.prosearchButton.setText(_translate("MainWindow", "Pro search"))
+
+
+
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
         self.search_terms = search_terms
@@ -668,6 +739,16 @@ MainWindowUpd = QtWidgets.QMainWindow()
 uiUpd = Ui_Updater()
 uiUpd.setupUi(MainWindowUpd)
 
+appExt = QtWidgets.QApplication(sys.argv)
+MainWindowExt = QtWidgets.QMainWindow()
+uiExt = Ui_ExtendedMenu()
+uiExt.setupUi(MainWindowExt)
+
+appPSearch = QtWidgets.QApplication(sys.argv)
+MainWindowPSearch = QtWidgets.QMainWindow()
+uiPSearch = Ui_ProSearch()
+uiPSearch.setupUi(MainWindowPSearch)
+
 def getplaylist():
     global playlist
     global newindex
@@ -779,6 +860,7 @@ ui.speedBox.valueChanged.connect(changespeed)
 ui.playlistSettingsButton.clicked.connect(MainWindowPlSet.show)
 ui.mixButton.clicked.connect(mixPlaylist)
 ui.settingsButton.clicked.connect(MainWindowSet.show)
+ui.extendedFunctButton.clicked.connect(MainWindowExt.show)
 
 uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
 
@@ -787,5 +869,10 @@ uiDelS.delButton.clicked.connect(delSongFromPl)
 uiSet.updateButton.clicked.connect(MainWindowUpd.show)
 
 uiUpd.updateButton.clicked.connect(updateAppPy)
+
+uiExt.prosearchButton.clicked.connect(MainWindowPSearch.show)
+
+uiPSearch.searchButton.clicked.connect(uiPSearch.searchinYT)
+uiPSearch.pushButton.clicked.connect(uiPSearch.addtopl)
 
 sys.exit(app.exec_())
