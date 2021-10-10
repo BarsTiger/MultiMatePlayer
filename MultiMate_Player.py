@@ -715,14 +715,15 @@ def playmusic(url, name, author):
     elif platform.system() == "Darwin":  # for MacOS
         mediaplayer.set_nsobject(int(ui.videoframe.winId()))
 
-    if mediaplayer.is_playing():
-        mediaplayer.pause()
-        is_paused = True
-        ui.timer.stop()
+    playpause()
+    ui.timer.stop()
+    time.sleep(1)
+    if int(mediaplayer.get_length()/60000) <= 3:
+        timeToSleepForUnbug = 0
     else:
-        mediaplayer.play()
-        ui.timer.start(100)
-        is_paused = False
+        timeToSleepForUnbug = (mediaplayer.get_length()/60000)/2.6
+    time.sleep(timeToSleepForUnbug)
+    ui.timer.start(100)
 
     mediaplayer.audio_set_volume(100)
     time.sleep(0.5)
