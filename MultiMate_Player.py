@@ -38,6 +38,12 @@ except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", 'psycopg2'])
     import psycopg2
 
+try:
+    from pypresence import Presence
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", 'pypresence'])
+    from pypresence import Presence
+
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -49,6 +55,10 @@ is_paused = False
 timeToSleep = 0
 playnext = True
 newindex = 0
+
+rpc = Presence("896669007342633000")
+rpc.connect()
+rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate", start=time.time())
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
@@ -629,6 +639,8 @@ def playmusic(url, name, author):
     timeToSleep = mediaplayer.get_length() / 1000
     cls()
     ui.nowPlaying.setText(author + " - " + name)
+    rpc.update(details="Listening " + author, state=name, large_image="multimate",
+               start=time.time())
     print("Playing " + author + " - " + name)
 
 app = QtWidgets.QApplication(sys.argv)
@@ -748,6 +760,7 @@ def updateAppPy():
     exit()
 
 MainWindow.show()
+
 cls()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
