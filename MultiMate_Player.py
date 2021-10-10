@@ -58,7 +58,20 @@ newindex = 0
 
 rpc = Presence("896669007342633000")
 rpc.connect()
-rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate", start=time.time())
+rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate",
+           start=time.time())
+
+configfile = "resources/cfg.cfg"
+
+if not os.path.isfile(configfile):
+    cfgwrite = open(configfile, 'w+')
+    empty = {}
+    json.dump(empty, cfgwrite, indent=3)
+    cfgwrite.close()
+
+cfgread = open(configfile)
+config = json.load(cfgread)
+cfgread.close()
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
@@ -365,6 +378,11 @@ class Ui_Settings(object):
         self.updateButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.updateButton.setObjectName("updateButton")
         self.verticalLayout.addWidget(self.updateButton)
+
+        self.appBuildButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.appBuildButton.setObjectName("appBuildButton")
+        self.verticalLayout.addWidget(self.appBuildButton)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 160, 21))
@@ -381,6 +399,7 @@ class Ui_Settings(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Settings"))
         self.updateButton.setText(_translate("MainWindow", "Upgrade player"))
+        self.appBuildButton.setText(_translate("MainWindow", "Choose main build"))
 
 class Ui_Updater(object):
     def setupUi(self, MainWindow):
