@@ -827,8 +827,11 @@ def delSongFromPl():
 
 def mixPlaylist():
     global listplaylist
-    random.shuffle(listplaylist)
-    print("Mixed!")
+    try:
+        random.shuffle(listplaylist)
+        print("Mixed!")
+    except:
+        pass
 
 def updateAppPy():
     rpc.update(details="Updating", state="Everything needs to be up-to-date", large_image="multimate",
