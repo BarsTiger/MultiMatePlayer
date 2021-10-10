@@ -750,6 +750,8 @@ def mixPlaylist():
     print("Mixed!")
 
 def updateAppPy():
+    rpc.update(details="Updating", state="Everything needs to br up-to-date", large_image="multimate",
+               start=time.time())
     urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources.zip", 'resources/resources.zip')
     with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
         archfile.extractall("resources")
@@ -760,7 +762,6 @@ def updateAppPy():
     exit()
 
 MainWindow.show()
-
 cls()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
