@@ -647,8 +647,45 @@ class Ui_RPCsettings(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "RPC settings"))
         self.ShowRPCcheckBox.setText(_translate("MainWindow", "Show RPC"))
+
+class Ui_MainBuild(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(161, 157)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.listWidget = QtWidgets.QListWidget(self.centralwidget)
+        self.listWidget.setGeometry(QtCore.QRect(0, 0, 161, 111))
+        self.listWidget.setObjectName("listWidget")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(0, 110, 161, 23))
+        self.pushButton.setObjectName("pushButton")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 161, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        for file in os.listdir(os.getcwd()):
+            if file == "MultiMate_Player.py":
+                self.listWidget.addItem(file)
+            elif file == "MultiMate_Player.pyw":
+                self.listWidget.addItem(file)
+            elif file == "MultiMate_Player.exe":
+                self.listWidget.addItem(file)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Choose main build"))
+        self.pushButton.setText(_translate("MainWindow", "Choose main build"))
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -852,6 +889,11 @@ MainWindowRPCSet = QtWidgets.QMainWindow()
 uiRPCSet = Ui_RPCsettings()
 uiRPCSet.setupUi(MainWindowRPCSet)
 
+appMainBuild = QtWidgets.QApplication(sys.argv)
+MainWindowMainBuild = QtWidgets.QMainWindow()
+uiMainBuild = Ui_MainBuild()
+uiMainBuild.setupUi(MainWindowMainBuild)
+
 def getplaylist():
     global playlist
     global newindex
@@ -947,13 +989,23 @@ def updateAppPy():
     with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
         archfile.extractall("resources")
     os.remove('resources/resources.zip')
-    urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", 'MultiMate_Player.py')
-    subprocess.Popen(sys.executable + ' MultiMate_Player.py')
+    if config['mainbuild'] != "MultiMate_Player.exe":
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", config['mainbuild'])
+        subprocess.Popen(sys.executable + ' ' + config['mainbuild'])
+    elif config['mainbuild'] == "MultiMate_Player.exe":
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", config['mainbuild'])
+        subprocess.Popen(config['mainbuild'])
     time.sleep(0.5)
     exit()
 
 def changeRPCinCFG():
     config['showrpc'] = uiRPCSet.ShowRPCcheckBox.isChecked()
+    cfgwrite = open(configfile, 'w+')
+    json.dump(config, cfgwrite, indent=3)
+    cfgwrite.close()
+
+def changeMainBuild():
+    config['mainbuild'] = uiMainBuild.listWidget.currentItem().text()
     cfgwrite = open(configfile, 'w+')
     json.dump(config, cfgwrite, indent=3)
     cfgwrite.close()
@@ -983,6 +1035,7 @@ uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
 uiDelS.delButton.clicked.connect(delSongFromPl)
 
 uiSet.updateButton.clicked.connect(MainWindowUpd.show)
+uiSet.appBuildButton.clicked.connect(MainWindowMainBuild.show)
 uiSet.RPCButton.clicked.connect(MainWindowRPCSet.show)
 
 uiUpd.updateButton.clicked.connect(updateAppPy)
@@ -993,5 +1046,7 @@ uiPSearch.searchButton.clicked.connect(uiPSearch.searchinYT)
 uiPSearch.pushButton.clicked.connect(uiPSearch.addtopl)
 
 uiRPCSet.ShowRPCcheckBox.clicked.connect(changeRPCinCFG)
+
+uiMainBuild.pushButton.clicked.connect(changeMainBuild)
 
 sys.exit(app.exec_())
