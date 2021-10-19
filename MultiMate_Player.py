@@ -63,11 +63,6 @@ timeToSleep = 0
 playnext = True
 newindex = 0
 
-rpc = Presence("896669007342633000")
-rpc.connect()
-rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate",
-           start=time.time())
-
 configfile = "resources/cfg.cfg"
 
 if not os.path.isfile(configfile):
@@ -79,6 +74,36 @@ if not os.path.isfile(configfile):
 cfgread = open(configfile)
 config = json.load(cfgread)
 cfgread.close()
+
+rpc = Presence("896669007342633000")
+try:
+    rpc.connect()
+    if config['showrpc']:
+        rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate",
+               start=time.time())
+except:
+    pass
+
+try:
+    check_var = config['mainbuild']
+except:
+    if "MultiMate_Player.py" in os.listdir(os.getcwd()):
+        config['mainbuild'] = 'MultiMate_Player.py'
+    elif "MultiMate_Player.pyw" in os.listdir(os.getcwd()):
+        config['mainbuild'] = 'MultiMate_Player.pyw'
+    elif "MultiMate_Player.exe" in os.listdir(os.getcwd()):
+        config['mainbuild'] = 'MultiMate_Player.exe'
+    cfgwrite = open(configfile, 'w+')
+    json.dump(config, cfgwrite, indent=3)
+    cfgwrite.close()
+
+try:
+    check_var = config['showrpc']
+except:
+    config['showrpc'] = True
+    cfgwrite = open(configfile, 'w+')
+    json.dump(config, cfgwrite, indent=3)
+    cfgwrite.close()
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
@@ -372,7 +397,7 @@ class Ui_PlaylistSettings(object):
 class Ui_Settings(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(160, 97)
+        MainWindow.resize(160, 100)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -389,6 +414,10 @@ class Ui_Settings(object):
         self.appBuildButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.appBuildButton.setObjectName("appBuildButton")
         self.verticalLayout.addWidget(self.appBuildButton)
+
+        self.RPCButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.RPCButton.setObjectName("RPCButton")
+        self.verticalLayout.addWidget(self.RPCButton)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -407,6 +436,7 @@ class Ui_Settings(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Settings"))
         self.updateButton.setText(_translate("MainWindow", "Upgrade player"))
         self.appBuildButton.setText(_translate("MainWindow", "Choose main build"))
+        self.RPCButton.setText(_translate("MainWindow", "Discord RPC settings"))
 
 class Ui_Updater(object):
     def setupUi(self, MainWindow):
@@ -439,7 +469,7 @@ class Ui_Updater(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Updater"))
-        self.updateButton.setText(_translate("MainWindow", "Download newest .py"))
+        self.updateButton.setText(_translate("MainWindow", "Download newest"))
 
 class Ui_DelSongs(object):
     def setupUi(self, MainWindow):
@@ -584,7 +614,41 @@ class Ui_ExtendedMenu(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Extended functions"))
         self.prosearchButton.setText(_translate("MainWindow", "Pro search"))
 
+class Ui_RPCsettings(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(160, 100)
+        MainWindow.setMinimumSize(QtCore.QSize(160, 100))
+        MainWindow.setMaximumSize(QtCore.QSize(160, 100))
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(9, 0, 151, 80))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.ShowRPCcheckBox = QtWidgets.QCheckBox(self.verticalLayoutWidget)
+        self.ShowRPCcheckBox.setObjectName("ShowRPCcheckBox")
+        self.verticalLayout.addWidget(self.ShowRPCcheckBox)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 160, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
+        MainWindow.setStatusBar(self.statusbar)
 
+        self.ShowRPCcheckBox.setChecked(config['showrpc'])
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.ShowRPCcheckBox.setText(_translate("MainWindow", "Show RPC"))
 
 class YoutubeSearch:
     def __init__(self, search_terms: str, max_results=None):
@@ -735,13 +799,17 @@ def playmusic(url, name, author):
     time.sleep(timeToSleepForUnbug)
     ui.timer.start(100)
 
-    mediaplayer.audio_set_volume(100)
+    mediaplayer.audio_set_volume(ui.volumeDial.value())
     time.sleep(0.5)
     timeToSleep = mediaplayer.get_length() / 1000
     cls()
     ui.nowPlaying.setText(author + " - " + name)
-    rpc.update(details="Listening " + author, state=name, large_image="multimate",
-               start=time.time())
+    try:
+        if config['showrpc']:
+            rpc.update(details="Listening " + author, state=name, large_image="multimate",
+                    start=time.time())
+    except:
+        pass
     print("Playing " + author + " - " + name)
 
 app = QtWidgets.QApplication(sys.argv)
@@ -778,6 +846,11 @@ appPSearch = QtWidgets.QApplication(sys.argv)
 MainWindowPSearch = QtWidgets.QMainWindow()
 uiPSearch = Ui_ProSearch()
 uiPSearch.setupUi(MainWindowPSearch)
+
+appRPCSet = QtWidgets.QApplication(sys.argv)
+MainWindowRPCSet = QtWidgets.QMainWindow()
+uiRPCSet = Ui_RPCsettings()
+uiRPCSet.setupUi(MainWindowRPCSet)
 
 def getplaylist():
     global playlist
@@ -864,8 +937,12 @@ def mixPlaylist():
         pass
 
 def updateAppPy():
-    rpc.update(details="Updating", state="Everything needs to be up-to-date", large_image="multimate",
-               start=time.time())
+    try:
+        if config['showrpc']:
+            rpc.update(details="Updating", state="Everything needs to be up-to-date", large_image="multimate",
+                    start=time.time())
+    except:
+        pass
     urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources.zip", 'resources/resources.zip')
     with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
         archfile.extractall("resources")
@@ -874,6 +951,12 @@ def updateAppPy():
     subprocess.Popen(sys.executable + ' MultiMate_Player.py')
     time.sleep(0.5)
     exit()
+
+def changeRPCinCFG():
+    config['showrpc'] = uiRPCSet.ShowRPCcheckBox.isChecked()
+    cfgwrite = open(configfile, 'w+')
+    json.dump(config, cfgwrite, indent=3)
+    cfgwrite.close()
 
 MainWindow.show()
 cls()
@@ -900,6 +983,7 @@ uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
 uiDelS.delButton.clicked.connect(delSongFromPl)
 
 uiSet.updateButton.clicked.connect(MainWindowUpd.show)
+uiSet.RPCButton.clicked.connect(MainWindowRPCSet.show)
 
 uiUpd.updateButton.clicked.connect(updateAppPy)
 
@@ -907,5 +991,7 @@ uiExt.prosearchButton.clicked.connect(MainWindowPSearch.show)
 
 uiPSearch.searchButton.clicked.connect(uiPSearch.searchinYT)
 uiPSearch.pushButton.clicked.connect(uiPSearch.addtopl)
+
+uiRPCSet.ShowRPCcheckBox.clicked.connect(changeRPCinCFG)
 
 sys.exit(app.exec_())
