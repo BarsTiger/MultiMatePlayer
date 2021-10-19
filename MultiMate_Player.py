@@ -8,11 +8,18 @@ import urllib.parse
 import urllib.request
 import json
 import zipfile
+import re
 try:
     import vlc
 except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", 'python-vlc'])
     import vlc
+
+try:
+    import youtube_dl
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", 'youtube_dl'])
+    import youtube_dl
 
 try:
     import pafy
@@ -670,6 +677,9 @@ def addtopl():
 
     print(str(len(list(playlist))))
     willbesong = {}
+    # willbesong['name'] = bytes(results[whichres]["title"], 'Windows-1251', 'ignore').decode('Windows-1251', 'ignore')
+    # willbesong['author'] = bytes(results[whichres]["channel"], 'Windows-1251', 'ignore').decode('Windows-1251', 'ignore')
+    # willbesong['url'] = url
     willbesong['name'] = results[whichres]["title"]
     willbesong['author'] = results[whichres]["channel"]
     willbesong['url'] = url
