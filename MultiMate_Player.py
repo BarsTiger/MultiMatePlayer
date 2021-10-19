@@ -993,7 +993,7 @@ def updateAppPy():
         urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", config['mainbuild'])
         subprocess.Popen(sys.executable + ' ' + config['mainbuild'])
     elif config['mainbuild'] == "MultiMate_Player.exe":
-        urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", config['mainbuild'])
+        urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/MultiMate_Player.exe", config['mainbuild'])
         subprocess.Popen(config['mainbuild'])
     time.sleep(0.5)
     exit()
