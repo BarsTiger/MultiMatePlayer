@@ -109,6 +109,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(801, 580)
+        MainWindow.setMinimumSize(QtCore.QSize(801, 580))
+        MainWindow.setMaximumSize(QtCore.QSize(801, 580))
         MainWindow.setWindowIcon(QtGui.QIcon('resources/MultiMate.ico'))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -366,6 +368,8 @@ class Ui_PlaylistSettings(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(160, 97)
+        MainWindow.setMinimumSize(QtCore.QSize(160, 97))
+        MainWindow.setMaximumSize(QtCore.QSize(160, 97))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -398,6 +402,8 @@ class Ui_Settings(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(160, 100)
+        MainWindow.setMinimumSize(QtCore.QSize(160, 100))
+        MainWindow.setMaximumSize(QtCore.QSize(160, 100))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -442,6 +448,8 @@ class Ui_Updater(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(160, 97)
+        MainWindow.setMinimumSize(QtCore.QSize(160, 97))
+        MainWindow.setMaximumSize(QtCore.QSize(160, 97))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -475,6 +483,8 @@ class Ui_DelSongs(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(300, 510)
+        MainWindow.setMinimumSize(QtCore.QSize(300, 510))
+        MainWindow.setMaximumSize(QtCore.QSize(300, 510))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
@@ -586,6 +596,8 @@ class Ui_ExtendedMenu(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(151, 74)
+        MainWindow.setMinimumSize(QtCore.QSize(151, 74))
+        MainWindow.setMaximumSize(QtCore.QSize(151, 74))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.prosearchButton = QtWidgets.QPushButton(self.centralwidget)
@@ -654,6 +666,8 @@ class Ui_MainBuild(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(161, 157)
+        MainWindow.setMinimumSize(QtCore.QSize(161, 157))
+        MainWindow.setMaximumSize(QtCore.QSize(161, 157))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
