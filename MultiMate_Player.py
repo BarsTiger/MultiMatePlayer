@@ -247,9 +247,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.openPlaylistButton = QtWidgets.QPushButton(self.centralwidget)
         self.openPlaylistButton.setGeometry(QtCore.QRect(230, 0, 75, 23))
         self.openPlaylistButton.setObjectName("openPlaylistButton")
-        self.songList = QtWidgets.QTextBrowser(self.centralwidget)
+
+        self.songList = QtWidgets.QListWidget(self.centralwidget)
         self.songList.setGeometry(QtCore.QRect(0, 43, 301, 411))
         self.songList.setObjectName("songList")
+
         self.TextAllSongs = QtWidgets.QTextEdit(self.centralwidget)
         self.TextAllSongs.setGeometry(QtCore.QRect(0, 20, 301, 23))
         self.TextAllSongs.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
@@ -350,7 +352,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.timeTextLabel.setText(_translate("MainWindow", "Time"))
         self.nowPlaying.setPlaceholderText(_translate("MainWindow", "Nothing here..."))
         self.openPlaylistButton.setText(_translate("MainWindow", "Open playlist"))
-        self.songList.setPlaceholderText(_translate("MainWindow", "Nothing here..."))
         self.TextAllSongs.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -917,7 +918,7 @@ def getplaylist():
     ui.songList.clear()
     listplaylist = list(playlist)
     for item in listplaylist:
-        ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
+        ui.songList.addItem(str(playlist[item]['author'] + " - " + playlist[item]['name']))
 
 def playallpl(index=0):
     global listplaylist
@@ -991,7 +992,7 @@ def mixPlaylist():
         random.shuffle(listplaylist)
         ui.songList.clear()
         for item in listplaylist:
-            ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
+            ui.songList.addItem(str(playlist[item]['author'] + " - " + playlist[item]['name']))
     except:
         pass
 
