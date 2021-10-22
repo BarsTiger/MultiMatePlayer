@@ -915,9 +915,9 @@ def getplaylist():
     newindex = 0
     playlist = readpl(ui.playlistsComboBox.currentText())
     ui.songList.clear()
-    for item in list(playlist):
-        ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
     listplaylist = list(playlist)
+    for item in listplaylist:
+        ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
 
 def playallpl(index=0):
     global listplaylist
@@ -982,13 +982,16 @@ def delSongFromPl():
     json.dump(playlist, playlistfile, indent=3, ensure_ascii=False)
     playlistfile.close()
 
+    generateDeletionList()
     getplaylist()
 
 def mixPlaylist():
     global listplaylist
     try:
         random.shuffle(listplaylist)
-        print("Mixed!")
+        ui.songList.clear()
+        for item in listplaylist:
+            ui.songList.append(str(playlist[item]['author'] + " - " + playlist[item]['name']))
     except:
         pass
 
