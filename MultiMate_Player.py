@@ -62,6 +62,9 @@ is_paused = False
 timeToSleep = 0
 playnext = True
 newindex = 0
+listplaylist = list()
+
+playerStarted = False
 
 configfile = "resources/cfg.cfg"
 
@@ -925,8 +928,9 @@ def playallpl(index=0):
     global newindex
     item = listplaylist[index]
     playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
+    ui.songList.setCurrentRow(index)
     if newindex < len(listplaylist) - 1:
-        newindex += 1
+        newindex = index + 1
     else:
         newindex = 0
 
@@ -1028,6 +1032,9 @@ def changeMainBuild():
     json.dump(config, cfgwrite, indent=3)
     cfgwrite.close()
 
+def playActivatedSong():
+    playallpl(ui.songList.currentRow())
+
 MainWindow.show()
 cls()
 
@@ -1047,6 +1054,7 @@ ui.playlistSettingsButton.clicked.connect(MainWindowPlSet.show)
 ui.mixButton.clicked.connect(mixPlaylist)
 ui.settingsButton.clicked.connect(MainWindowSet.show)
 ui.extendedFunctButton.clicked.connect(MainWindowExt.show)
+ui.songList.itemClicked.connect(playActivatedSong)
 
 uiPlSet.deletesongButton.clicked.connect(showMainWindowDelS)
 
