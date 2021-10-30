@@ -291,7 +291,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.videoframe = QtWidgets.QMacCocoaViewContainer(self.centralwidget)
         else:
             self.videoframe = QtWidgets.QFrame(self.centralwidget)
-        self.videoframe.setGeometry(QtCore.QRect(310, 70, 401, 381))
+        self.videoframe.setGeometry(QtCore.QRect(310, 60, 394, 394))
         self.videoframe.setObjectName("videoframe")
         self.timeline.raise_()
         self.playpausePicture.raise_()
