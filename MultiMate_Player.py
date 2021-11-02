@@ -1009,7 +1009,7 @@ def updateAppPy():
                     start=time.time())
     except:
         pass
-    urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources.zip", 'resources/resources.zip')
+    urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources_dl.zip", 'resources/resources.zip')
     with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
         archfile.extractall("resources")
     os.remove('resources/resources.zip')
