@@ -353,7 +353,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.speedBox.setPrefix(_translate("MainWindow", "x"))
         self.speedTextLabel.setText(_translate("MainWindow", "Speed"))
         self.timeTextLabel.setText(_translate("MainWindow", "Time"))
-        self.nowPlaying.setPlaceholderText(_translate("MainWindow", "Nothing here..."))
+        self.nowPlaying.setPlaceholderText(_translate("MainWindow", "Choose playlist and open it..."))
         self.openPlaylistButton.setText(_translate("MainWindow", "Open playlist"))
         self.TextAllSongs.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -922,6 +922,7 @@ def getplaylist():
     listplaylist = list(playlist)
     for item in listplaylist:
         ui.songList.addItem(str(playlist[item]['author'] + " - " + playlist[item]['name']))
+    ui.nowPlaying.setPlaceholderText("Click ON button or song name...")
 
 def playallpl(index=0):
     global listplaylist
@@ -944,6 +945,7 @@ def playprevsong():
     playallpl(newindex)
 
 def stopandclear():
+    ui.nowPlaying.setPlaceholderText("Nothing is beeing played...")
     mediaplayer.set_media(None)
 
 def playpause():
