@@ -1,14 +1,11 @@
 import random
-import threading
 import time
-from tkinter import *
 import platform
 import sys, subprocess, os
 import urllib.parse
 import urllib.request
 import json
 import zipfile
-import re
 try:
     import vlc
 except:
