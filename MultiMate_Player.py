@@ -1012,7 +1012,6 @@ def updateAppPy():
     urllib.request.urlretrieve("https://github.com/BarsTiger/MultiMatePlayer/raw/master/resources/resources.zip", 'resources/resources.zip')
     with zipfile.ZipFile('resources/resources.zip', 'r') as archfile:
         archfile.extractall("resources")
-    os.remove('resources/resources.zip')
     if config['mainbuild'] != "MultiMate_Player.exe":
         urllib.request.urlretrieve("https://raw.githubusercontent.com/BarsTiger/MultiMatePlayer/master/MultiMate_Player.py", config['mainbuild'])
         subprocess.Popen(sys.executable + ' ' + config['mainbuild'])
