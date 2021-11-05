@@ -138,23 +138,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.playpausePicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.playpausePicture.setObjectName("playpausePicture")
 
-        self.hardstopbutton = QtWidgets.QPushButton(self.centralwidget)
-        self.hardstopbutton.setEnabled(True)
-        self.hardstopbutton.setGeometry(QtCore.QRect(290, 520, 40, 40))
-        font = QtGui.QFont()
-        font.setKerning(True)
-        self.hardstopbutton.setFont(font)
-        self.hardstopbutton.setStyleSheet("background-color: rgba(10, 0, 0, 0);\n"
-                                           "")
-        self.hardstopbutton.setText("")
-        self.hardstopbutton.setObjectName("hardstopbutton")
-        self.hardstopPicture = QtWidgets.QLabel(self.centralwidget)
-        self.hardstopPicture.setGeometry(QtCore.QRect(290, 520, 40, 40))
-        self.hardstopPicture.setText("")
-        self.hardstopPicture.setPixmap(QtGui.QPixmap("resources/hardstopbutton.png"))
-        self.hardstopPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.hardstopPicture.setObjectName("hardstopPicture")
-
         self.prevbutton = QtWidgets.QPushButton(self.centralwidget)
         self.prevbutton.setEnabled(True)
         self.prevbutton.setGeometry(QtCore.QRect(340, 520, 40, 40))
@@ -187,23 +170,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.nextPicture.setPixmap(QtGui.QPixmap("resources/next.png"))
         self.nextPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.nextPicture.setObjectName("nextPicture")
-
-        self.hardplaybutton = QtWidgets.QPushButton(self.centralwidget)
-        self.hardplaybutton.setEnabled(True)
-        self.hardplaybutton.setGeometry(QtCore.QRect(490, 520, 40, 40))
-        font = QtGui.QFont()
-        font.setKerning(True)
-        self.hardplaybutton.setFont(font)
-        self.hardplaybutton.setStyleSheet("background-color: rgba(10, 0, 0, 0);\n"
-                                           "")
-        self.hardplaybutton.setText("")
-        self.hardplaybutton.setObjectName("hardplaybutton")
-        self.hardplayPicture = QtWidgets.QLabel(self.centralwidget)
-        self.hardplayPicture.setGeometry(QtCore.QRect(490, 520, 40, 40))
-        self.hardplayPicture.setText("")
-        self.hardplayPicture.setPixmap(QtGui.QPixmap("resources/hardplaybutton.png"))
-        self.hardplayPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
-        self.hardplayPicture.setObjectName("hardplayPicture")
 
         self.speedBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.speedBox.setGeometry(QtCore.QRect(10, 515, 62, 22))
@@ -315,8 +281,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.mixButton.raise_()
         self.playlistSettingsButton.raise_()
         self.videoframe.raise_()
-        self.hardplaybutton.raise_()
-        self.hardstopbutton.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 801, 21))
@@ -919,11 +883,13 @@ def getplaylist():
     listplaylist = list(playlist)
     for item in listplaylist:
         ui.songList.addItem(str(playlist[item]['author'] + " - " + playlist[item]['name']))
-    ui.nowPlaying.setPlaceholderText("Click ON button or song name...")
+    ui.nowPlaying.setPlaceholderText("Click play button or song name...")
 
 def playallpl(index=0):
     global listplaylist
     global newindex
+    ui.playpausebutton.clicked.disconnect()
+    ui.playpausebutton.clicked.connect(playpause)
     item = listplaylist[index]
     playmusic(playlist[item]['url'], playlist[item]['name'], playlist[item]['author'])
     ui.songList.setCurrentRow(index)
@@ -940,10 +906,6 @@ def playprevsong():
     global newindex
     newindex -= 2
     playallpl(newindex)
-
-def stopandclear():
-    ui.nowPlaying.setPlaceholderText("Nothing is beeing played...")
-    mediaplayer.set_media(None)
 
 def playpause():
     global is_paused
@@ -1037,13 +999,11 @@ MainWindow.show()
 cls()
 
 ui.openPlaylistButton.clicked.connect(getplaylist)
-ui.hardplaybutton.clicked.connect(playallpl)
+ui.playpausebutton.clicked.connect(playallpl)
 ui.timeline.sliderMoved.connect(set_position)
 ui.timeline.sliderPressed.connect(set_position)
 ui.nextbutton.clicked.connect(playnextsong)
 ui.prevbutton.clicked.connect(playprevsong)
-ui.hardstopbutton.clicked.connect(stopandclear)
-ui.playpausebutton.clicked.connect(playpause)
 ui.volumeDial.valueChanged.connect(changevolume)
 ui.findSongButton.clicked.connect(searchinYT)
 ui.addThisSongButton.clicked.connect(addtopl)
