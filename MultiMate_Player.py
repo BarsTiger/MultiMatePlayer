@@ -782,7 +782,12 @@ def set_position():
     ui.timer.start(100)
 
 def playmusic(url, name, author):
-    video = pafy.new(url)
+    video = None
+    while video is None:
+        try:
+            video = pafy.new(url)
+        except:
+            print("Cannot create translation link, I will try once more")
     best = video.getbest()
     playurl = best.url
 
