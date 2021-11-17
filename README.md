@@ -1,5 +1,5 @@
-# MultiMate is in dev. Only offline version without database available
-MultiMate project - playlist system open-source music player on python (PyQt5, VLC)\
+# MultiMate - playlist system open-source music player project on python (PyQt5, VLC)
+MultiMate is in dev. Only offline version without database available\
 Now only on-disk playlists supported!
 
 Early features: 
