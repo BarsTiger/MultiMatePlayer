@@ -1,5 +1,6 @@
 /Tests/
-/buildEXE.txt
-/MultiMate_Player.pyw
-/play.list
-/playshort.list
+buildEXE.txt
+MultiMate_Player.pyw
+*.list
+cfg.cfg
+/.idea/

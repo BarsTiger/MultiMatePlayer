@@ -18,11 +18,7 @@ except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", 'youtube_dl'])
     import youtube_dl
 
-try:
-    import pafy
-except:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", 'pafy'])
-    import pafy
+import resources.pafy_fix.pafy as pafy
 
 try:
     import requests
@@ -790,6 +786,7 @@ def playmusic(url, name, author):
             print("Cannot create translation link, I will try once more")
     best = video.getbest()
     playurl = best.url
+
 
     global instance
     global media
