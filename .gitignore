@@ -5,3 +5,4 @@ cfg.cfg
 /.idea/
 /build/
 /dist/
+*.spec
