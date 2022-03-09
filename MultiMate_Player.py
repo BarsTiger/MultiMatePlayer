@@ -1,11 +1,16 @@
-import random
-import time
+import json
+import os
 import platform
-import sys, subprocess, os
+import random
+import subprocess
+import sys
+import time
 import urllib.parse
 import urllib.request
-import json
 import zipfile
+
+import resources.pafy_fix.pafy as pafy
+
 try:
     import vlc
 except:
@@ -17,8 +22,6 @@ try:
 except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", 'youtube_dl'])
     import youtube_dl
-
-import resources.pafy_fix.pafy as pafy
 
 try:
     import requests
@@ -76,7 +79,7 @@ try:
     rpc.connect()
     if config['showrpc']:
         rpc.update(details="Just started app", state="Nothing is beeing listened...", large_image="multimate",
-               start=time.time())
+               start=int(time.time()))
 except:
     pass
 
@@ -107,7 +110,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.resize(801, 580)
         MainWindow.setMinimumSize(QtCore.QSize(801, 580))
         MainWindow.setMaximumSize(QtCore.QSize(801, 580))
-        MainWindow.setWindowIcon(QtGui.QIcon('resources/MultiMate.ico'))
+        MainWindow.setWindowIcon(QtGui.QIcon('resources/img/MultiMate.ico'))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.timeline = QtWidgets.QSlider(self.centralwidget)
@@ -130,7 +133,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.playpausePicture = QtWidgets.QLabel(self.centralwidget)
         self.playpausePicture.setGeometry(QtCore.QRect(390, 520, 40, 40))
         self.playpausePicture.setText("")
-        self.playpausePicture.setPixmap(QtGui.QPixmap("resources/MultiMate40x40.png"))
+        self.playpausePicture.setPixmap(QtGui.QPixmap("resources/img/MultiMate40x40.png"))
         self.playpausePicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.playpausePicture.setObjectName("playpausePicture")
 
@@ -147,7 +150,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.prevPicture = QtWidgets.QLabel(self.centralwidget)
         self.prevPicture.setGeometry(QtCore.QRect(340, 520, 40, 40))
         self.prevPicture.setText("")
-        self.prevPicture.setPixmap(QtGui.QPixmap("resources/prev.png"))
+        self.prevPicture.setPixmap(QtGui.QPixmap("resources/img/prev.png"))
         self.prevPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.prevPicture.setObjectName("prevPicture")
         self.nextbutton = QtWidgets.QPushButton(self.centralwidget)
@@ -163,7 +166,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.nextPicture = QtWidgets.QLabel(self.centralwidget)
         self.nextPicture.setGeometry(QtCore.QRect(440, 520, 40, 40))
         self.nextPicture.setText("")
-        self.nextPicture.setPixmap(QtGui.QPixmap("resources/next.png"))
+        self.nextPicture.setPixmap(QtGui.QPixmap("resources/img/next.png"))
         self.nextPicture.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.nextPicture.setObjectName("nextPicture")
 
@@ -194,7 +197,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.VolDialBG = QtWidgets.QLabel(self.centralwidget)
         self.VolDialBG.setGeometry(QtCore.QRect(720, 0, 81, 81))
         self.VolDialBG.setText("")
-        self.VolDialBG.setPixmap(QtGui.QPixmap("resources/MultiMate80x80.png"))
+        self.VolDialBG.setPixmap(QtGui.QPixmap("resources/img/MultiMate80x80.png"))
         self.VolDialBG.setObjectName("VolDialBG")
         self.playlistsComboBox = QtWidgets.QComboBox(self.centralwidget)
         self.playlistsComboBox.setGeometry(QtCore.QRect(0, 0, 231, 22))

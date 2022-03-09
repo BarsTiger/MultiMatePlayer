@@ -1,6 +1,7 @@
 /Tests/
-buildEXE.txt
 MultiMate_Player.pyw
 *.list
 cfg.cfg
 /.idea/
+/build/
+/dist/

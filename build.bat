@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --onefile --windowed --icon "resources/MultiMate.ico"  "MultiMate_Player.py"
